@@ -1,0 +1,3 @@
+g++ -c server.cpp smtpfuncs.cpp find_iface.cpp get_iface.cpp get_ip.cpp set_ip.cpp del_ip.cpp  read.cpp parse_deliface.cpp parse_gethost.cpp parse_getip.cpp parse_getnic.cpp parse_off.cpp parse_on.cpp parse_setip.cpp ../common/chomp.cpp ../common/itoc.cpp ../common/rsa_key.cpp ../common/help.cpp ../common/regex.cpp email.cpp
+
+g++ -DTHREADSAFE=1 -L/usr/lib64 -L/lib64 -lz -lssl -lcrypto -o cips server.o smtpfuncs.o find_iface.o get_iface.o get_ip.o set_ip.cpp del_ip.o  read.o parse_deliface.o parse_gethost.o parse_getip.o parse_getnic.o parse_off.o parse_on.o parse_setip.o chomp.o itoc.o rsa_key.o help.o regex.o email.o

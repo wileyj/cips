@@ -1,0 +1,94 @@
+#!/bin/bash
+#
+# Init file for CIP Server
+#
+# chkconfig: - 80 12
+# description: A client/server application to modify Ip configuration
+# processname: cips
+# pidfile: /var/run/cips.pid
+
+function pidof(){
+  PID=`ps aux|grep /usr/sbin/c[ips] | awk {'print $2'}`
+}
+
+if [ "$(whoami)" != 'root' ]; then
+    echo "You have no permission to run $0 as non-root user."
+    exit 1;
+fi
+. /lib/lsb/init-functions
+NAME=cips
+DAEMON="/usr/sbin/${NAME}" 
+SPID=/var/run/${NAME}
+PIDFILE=/var/run/${NAME}.pid
+pidof
+
+test -x $DAEMON || exit 5
+case $1 in
+    start)
+        # Checked the PID file exists and check the actual status of process
+        if [ -e $PIDFILE ]; then
+            # If the status is SUCCESS then don't need to start again.
+            if [ $? = "0" ] 
+	    then
+	       echo -e "${NAME} is already running"
+               exit # Exit
+            fi
+        fi
+        # Start the daemon.
+        printf "Starting ${NAME} process"
+	start_daemon -p ${PIDFILE} ${DAEMON} -d 
+        if [ $? = "0" ] 
+	then
+            log_success_msg
+	    pidof
+	    echo $PID > $PIDFILE
+        else  
+            log_failure_msg
+        fi    
+    ;;    
+    stop)
+        # Stop the daemon.
+        if [ -e $PIDFILE ]
+	then
+	    printf "Stopping the $NAME process"
+	    pidof
+            if [ $PID ]
+	    then
+                killproc -p $PIDFILE ${DAEMON}
+                /bin/rm -rf $PIDFILE
+		log_success_msg
+            fi
+        else
+            echo -e "$NAME process is not running"
+	    exit
+        fi
+    ;;
+    restart)
+        # Restart the daemon.
+        $0 stop && sleep 2 && $0 start
+    ;;
+    status)
+        # Check the status of the process.
+        if [ -e $PIDFILE ]
+	then
+	    pidof
+	    printf "$NAME daemon running"
+	    pidof
+	    if [ $PID ]
+	    then
+		log_success_msg
+		exit
+	    else
+		log_failure_msg
+	    fi
+        else
+	    echo -e "${NAME} process is stopped"
+	    exit 
+        fi
+    ;;
+    *)
+        # For invalid arguments, print the usage message.
+        echo "Usage: $0 {start|stop|restart|status}"
+        exit 2
+    ;;
+esac
