@@ -59,5 +59,5 @@ make %{?_smp_mflags}
 
 
 %changelog
-* Fri Sep 13 2013 Jesse Wiley<jesse.wiley@viacom.com> - 0.0.1-1
+* Fri Sep 13 2013 Jesse Wiley<user@local.com> - 0.0.1-1
 - initial build.
